@@ -83,9 +83,8 @@ public class LineItemController {
 				
 				jr = JsonResponse.getInstance(lineItemRepo.save(l));
 				
-				
-				//doesnt work here
-				recalcTotal(l.getRequest().getId());
+								
+				recalcTotal(l.getRequest());
 				
 				}catch (DataIntegrityViolationException dive) {
 					jr = JsonResponse.getInstance(dive.getRootCause().getMessage());
@@ -109,15 +108,10 @@ public class LineItemController {
 				if (lineItemRepo.existsById(l.getId())) {
 				
 				
-						
-					
-					
-					
 					jr = JsonResponse.getInstance(lineItemRepo.save(l));
 					
-					
-					//recalcs works here
-					recalcTotal(l.getRequest().getId());
+								
+					recalcTotal(l.getRequest());
 					
 					
 				} else {
@@ -149,12 +143,11 @@ public class LineItemController {
 			try {
 				if (lineItemRepo.existsById(id)) {
 					
-					int requestID = lineItemRepo.findById(id).get().getRequest().getId();
+					Request r = lineItemRepo.findById(id).get().getRequest();
 					
 					lineItemRepo.deleteById(id);
-					
-					// added
-					recalcTotal(lineItemRepo.findById(requestID).get().getRequest().getId());
+									
+					recalcTotal(r);
 			
 					jr = JsonResponse.getInstance("Delete Successful!");
 					
@@ -175,19 +168,18 @@ public class LineItemController {
 	
 		
 	
-		void recalcTotal(int requestId) {
+		void recalcTotal(Request request) {
 			
 			 double lineItemtotal = 0;
 			
-	        List<LineItem> lineItems = lineItemRepo.findByRequestId(requestId);
+	        List<LineItem> lineItems = lineItemRepo.findByRequestId(request.getId());
 	       
 	        
 	        for (LineItem line: lineItems) {
 	        	lineItemtotal += line.getLineTotal();
 	        }
 	        
-	        //create instance of Request to set total and pass to repo
-	        Request request = requestRepo.findById(requestId).get();
+
 	        request.setTotal(lineItemtotal);
 	        
 	        try {
@@ -195,7 +187,7 @@ public class LineItemController {
 	            
 	        } catch (Exception e) {
 	        	
-	            e.printStackTrace();
+	           throw e;
 	        }
 	    }
 		
