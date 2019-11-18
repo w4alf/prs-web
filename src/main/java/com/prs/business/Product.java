@@ -4,6 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class Product {
@@ -12,7 +14,11 @@ public class Product {
 	@Id
 	@GeneratedValue(strategy= GenerationType.IDENTITY)
 	private int id;
-	private int vendorId;
+	
+	@ManyToOne
+	@JoinColumn(name="VendorID")
+	private Vendor vendor;
+	
 	private String partNumber;
 	private String name;
 	private double price;
@@ -24,11 +30,11 @@ public class Product {
 
 	}
 
-	public Product(int id, int vendorId, String partNumber, String name, double price, String unit,
+	public Product(int id, Vendor vendor, String partNumber, String name, double price, String unit,
 			String photoPath) {
 		super();
 		this.id = id;
-		this.vendorId = vendorId;
+		this.vendor = vendor;
 		this.partNumber = partNumber;
 		this.name = name;
 		this.price = price;
@@ -50,18 +56,13 @@ public class Product {
 		this.id = id;
 	}
 
-	/**
-	 * @return the vendorId
-	 */
-	public int getVendorId() {
-		return vendorId;
+	
+	public Vendor getVendor() {
+		return vendor;
 	}
 
-	/**
-	 * @param vendorId the vendorId to set
-	 */
-	public void setVendorId(int vendorId) {
-		this.vendorId = vendorId;
+	public void setVendor(Vendor vendor) {
+		this.vendor = vendor;
 	}
 
 	/**
@@ -136,7 +137,7 @@ public class Product {
 
 	@Override
 	public String toString() {
-		return "Product [id=" + id + ", vendorId=" + vendorId + ", partNumber=" + partNumber + ", name="
+		return "Product [id=" + id + ", vendor=" + vendor + ", partNumber=" + partNumber + ", name="
 				+ name + ", price=" + price + ", unit=" + unit + ", photoPath=" + photoPath + "]";
 	}
 	
